@@ -29,8 +29,11 @@ pub struct LeanNodeConfig {
     #[arg(long, help = "HTTP URL of a remote node to sync checkpoint state from")]
     pub checkpoint_sync_url: Option<Url>,
 
-    #[arg(long, help = "The path to the validator registry")]
-    pub validator_registry_path: PathBuf,
+    #[arg(
+        long,
+        help = "The path to the validator registry. If omitted, the node runs without validator duties"
+    )]
+    pub validator_registry_path: Option<PathBuf>,
 
     #[arg(
         default_value = "ream_0",

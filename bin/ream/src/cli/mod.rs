@@ -132,7 +132,12 @@ mod tests {
         match cli.command {
             Commands::LeanNode(config) => {
                 assert_eq!(
-                    config.validator_registry_path.to_str().unwrap(),
+                    config
+                        .validator_registry_path
+                        .as_ref()
+                        .unwrap()
+                        .to_str()
+                        .unwrap(),
                     "./assets/lean/validator_registry.yml"
                 );
 
@@ -146,6 +151,23 @@ mod tests {
                     config.private_key_path.as_ref().unwrap().to_str().unwrap(),
                     "awesome-node0.key"
                 );
+            }
+            _ => unreachable!("This test should only validate the lean node cli"),
+        }
+    }
+
+    #[test]
+    fn test_cli_lean_node_without_validator_registry() {
+        let cli = Cli::parse_from([
+            "program",
+            "lean_node",
+            "--network",
+            "./assets/lean/config-devnet4.yaml",
+        ]);
+
+        match cli.command {
+            Commands::LeanNode(config) => {
+                assert!(config.validator_registry_path.is_none());
             }
             _ => unreachable!("This test should only validate the lean node cli"),
         }

@@ -241,8 +241,16 @@ pub async fn run_lean_node(config: LeanNodeConfig, executor: ReamExecutor, ream_
 
     set_attestation_committee_count(config.attestation_committee_count);
 
-    let keystores = load_validator_registry(&config.validator_registry_path, &config.node_id)
-        .expect("Failed to load validator registry");
+    let keystores = match &config.validator_registry_path {
+        Some(validator_registry_path) => {
+            load_validator_registry(validator_registry_path, &config.node_id)
+                .expect("Failed to load validator registry")
+        }
+        None => {
+            info!("No validator registry path provided, running without validator duties");
+            vec![]
+        }
+    };
 
     if let Some(keystore) = keystores.first() {
         set_int_gauge_vec(

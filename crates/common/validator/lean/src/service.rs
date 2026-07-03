@@ -73,6 +73,12 @@ impl ValidatorService {
         loop {
             tokio::select! {
                 _ = interval.tick() => {
+                    // A node without validator keys has no duties so just advance the clock.
+                    if self.keystores.is_empty() {
+                        tick_count += 1;
+                        continue;
+                    }
+
                     let slot = tick_count / INTERVALS_PER_SLOT;
                     match tick_count % INTERVALS_PER_SLOT {
                         0 => {
